@@ -246,7 +246,7 @@ const Produtos = () => {
         fontSize: '14px',
       }}>
         <p style={{ fontWeight: 800, fontSize: '16px', letterSpacing: '0.05em', marginBottom: '6px' }}>PETALMZDE</p>
-        <p style={{ opacity: 0.6, marginBottom: '16px' }}>Flores artificiais personalizadas — feitas com amor 💜</p>
+        <p style={{ opacity: 0.6, marginBottom: '16px' }}>Flores personalizadas feitas com amor 💜</p>
         <p style={{ opacity: 0.4, fontSize: '12px' }}>© {new Date().getFullYear()} PETALMZDE</p>
       </footer>
     </div>
