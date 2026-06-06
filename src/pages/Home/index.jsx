@@ -338,7 +338,7 @@ const Home = () => {
               <img src={logo} alt="Petalmzde" style={{ height: '44px', objectFit: 'contain' }} />
             </div>
             <p style={{ color: colors.purple[700], lineHeight: 1.7, fontSize: '15px', maxWidth: '260px', margin: isMobile ? '0 auto' : '0' }}>
-              Flores artificiais personalizadas feitas com amor para eternizar seus momentos especiais.
+              Flores personalizadas feitas com amor para eternizar seus momentos especiais.
             </p>
           </div>
 
