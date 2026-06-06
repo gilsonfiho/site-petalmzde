@@ -22,8 +22,8 @@ const Produtos = () => {
 
       {/* HEADER */}
       <header style={{
-        background: gradients.hero,
-        boxShadow: '0 4px 24px rgba(91,61,143,0.25)',
+        background: 'white',
+        boxShadow: '0 2px 16px rgba(91,61,143,0.10)',
         position: 'sticky',
         top: 0,
         zIndex: 1000,
@@ -33,33 +33,21 @@ const Produtos = () => {
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: isMobile ? '14px 20px' : '16px 32px',
+          padding: isMobile ? '12px 20px' : '14px 32px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <div style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '4px 8px',
-              display: 'flex',
-              alignItems: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-            }}>
-              <img src={logo} alt="Petalmzde" style={{ height: isMobile ? '34px' : '40px', objectFit: 'contain', display: 'block' }} />
-            </div>
-            {!isMobile && (
-              <span style={{ color: 'white', fontWeight: 800, fontSize: '22px', letterSpacing: '0.04em' }}>PETALMZDE</span>
-            )}
+          <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+            <img src={logo} alt="Petalmzde" style={{ height: isMobile ? '38px' : '46px', objectFit: 'contain', display: 'block' }} />
           </div>
           <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button
               onClick={() => navigate('/')}
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: colors.purple[100],
                 border: 'none',
-                color: 'white',
+                color: colors.purple[700],
                 fontWeight: 600,
                 fontSize: isMobile ? '14px' : '15px',
                 padding: isMobile ? '8px 14px' : '9px 20px',
@@ -68,8 +56,8 @@ const Produtos = () => {
                 fontFamily: 'inherit',
                 transition: 'background 0.2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+              onMouseEnter={e => e.currentTarget.style.background = colors.purple[200]}
+              onMouseLeave={e => e.currentTarget.style.background = colors.purple[100]}
             >
               ← Início
             </button>
@@ -78,8 +66,8 @@ const Produtos = () => {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                background: 'white',
-                color: colors.purple[700],
+                background: gradients.button,
+                color: 'white',
                 fontWeight: 700,
                 fontSize: isMobile ? '14px' : '15px',
                 padding: isMobile ? '8px 14px' : '9px 20px',
