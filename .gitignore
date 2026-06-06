@@ -1,0 +1,36 @@
+# Dependências
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+dist-ssr/
+
+# Claude Code — arquivos locais da ferramenta, não pertencem ao repositório
+.claude/
+.agents/
+skills-lock.json
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
