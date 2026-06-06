@@ -318,11 +318,12 @@ const Home = () => {
 
       {/* ── FOOTER ── */}
       <footer style={{
-        background: gradients.dark,
-        color: 'white',
+        background: colors.purple[100],
+        color: colors.purple[900],
         padding: isMobile ? '48px 20px' : 'clamp(52px, 8vw, 72px) 20px',
         width: '100%',
         boxSizing: 'border-box',
+        borderTop: `1px solid ${colors.purple[200]}`,
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -336,14 +337,14 @@ const Home = () => {
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '14px', justifyContent: isMobile ? 'center' : 'flex-start' }}>
               <img src={logo} alt="Petalmzde" style={{ height: '44px', objectFit: 'contain' }} />
             </div>
-            <p style={{ opacity: 0.75, lineHeight: 1.7, fontSize: '15px', maxWidth: '260px', margin: isMobile ? '0 auto' : '0' }}>
+            <p style={{ color: colors.purple[700], lineHeight: 1.7, fontSize: '15px', maxWidth: '260px', margin: isMobile ? '0 auto' : '0' }}>
               Flores artificiais personalizadas feitas com amor para eternizar seus momentos especiais.
             </p>
           </div>
 
           {/* Links */}
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', opacity: 0.9 }}>Links rápidos</h4>
+            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', color: colors.purple[900] }}>Links rápidos</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', alignItems: isMobile ? 'center' : 'flex-start' }}>
               {[
                 { label: 'Início', href: '/' },
@@ -351,9 +352,9 @@ const Home = () => {
                 { label: 'Loja Shopee', href: 'https://shopee.com.br/petalmzde' },
               ].map(({ label, href }) => (
                 <li key={label}>
-                  <a href={href} style={{ color: 'white', opacity: 0.75, textDecoration: 'none', fontSize: '15px', transition: 'opacity 0.2s' }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-                    onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
+                  <a href={href} style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.color = colors.purple[900]}
+                    onMouseLeave={e => e.currentTarget.style.color = colors.purple[700]}
                   >
                     {label}
                   </a>
@@ -364,13 +365,13 @@ const Home = () => {
 
           {/* Contato */}
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', opacity: 0.9 }}>Contato</h4>
+            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', color: colors.purple[900] }}>Contato</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: isMobile ? 'center' : 'flex-start' }}>
               {socialLinks.map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                  style={{ color: 'white', opacity: 0.75, textDecoration: 'none', fontSize: '15px', transition: 'opacity 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-                  onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
+                  style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = colors.purple[900]}
+                  onMouseLeave={e => e.currentTarget.style.color = colors.purple[700]}
                 >
                   {label}
                 </a>
@@ -382,11 +383,11 @@ const Home = () => {
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
+          borderTop: `1px solid ${colors.purple[200]}`,
           marginTop: isMobile ? '40px' : '52px',
           paddingTop: '28px',
           textAlign: 'center',
-          opacity: 0.5,
+          color: colors.purple[600],
           fontSize: '13px',
         }}>
           © {new Date().getFullYear()} petalmzde — Todos os direitos reservados.
