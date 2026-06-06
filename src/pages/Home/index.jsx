@@ -64,8 +64,8 @@ const Home = () => {
 
       {/* ── HEADER ── */}
       <header style={{
-        background: gradients.hero,
-        boxShadow: '0 4px 24px rgba(91,61,143,0.25)',
+        background: 'white',
+        boxShadow: '0 2px 16px rgba(91,61,143,0.10)',
         position: 'sticky',
         top: 0,
         zIndex: 1000,
@@ -75,28 +75,14 @@ const Home = () => {
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: isMobile ? '14px 20px' : '16px 32px',
+          padding: isMobile ? '12px 20px' : '14px 32px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-          {/* Brand */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <div style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '4px 8px',
-              display: 'flex',
-              alignItems: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-            }}>
-              <img src={logo} alt="Petalmzde" style={{ height: isMobile ? '34px' : '40px', objectFit: 'contain', display: 'block' }} />
-            </div>
-            {!isMobile && (
-              <span style={{ color: 'white', fontWeight: 800, fontSize: '22px', letterSpacing: '0.04em' }}>
-                PETALMZDE
-              </span>
-            )}
+          {/* Brand — só logo */}
+          <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+            <img src={logo} alt="Petalmzde" style={{ height: isMobile ? '38px' : '46px', objectFit: 'contain', display: 'block' }} />
           </div>
 
           {/* Nav */}
@@ -104,9 +90,9 @@ const Home = () => {
             <button
               onClick={() => navigate('/produtos')}
               style={{
-                background: 'rgba(255,255,255,0.15)',
+                background: colors.purple[100],
                 border: 'none',
-                color: 'white',
+                color: colors.purple[700],
                 fontWeight: 600,
                 fontSize: isMobile ? '14px' : '15px',
                 padding: isMobile ? '8px 14px' : '9px 20px',
@@ -115,8 +101,8 @@ const Home = () => {
                 fontFamily: 'inherit',
                 transition: 'background 0.2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+              onMouseEnter={e => e.currentTarget.style.background = colors.purple[200]}
+              onMouseLeave={e => e.currentTarget.style.background = colors.purple[100]}
             >
               Produtos
             </button>
@@ -125,8 +111,8 @@ const Home = () => {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                background: 'white',
-                color: colors.purple[700],
+                background: gradients.button,
+                color: 'white',
                 fontWeight: 700,
                 fontSize: isMobile ? '14px' : '15px',
                 padding: isMobile ? '8px 14px' : '9px 20px',
@@ -156,17 +142,6 @@ const Home = () => {
         boxSizing: 'border-box',
       }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <p style={{
-            fontSize: isMobile ? '12px' : '13px',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            opacity: 0.8,
-            marginBottom: '18px',
-          }}>
-            💜💐✨ Eternizando momentos especiais
-          </p>
-
           <h1 style={{
             fontSize: isMobile ? 'clamp(48px, 14vw, 72px)' : 'clamp(64px, 9vw, 100px)',
             fontWeight: 900,
@@ -174,7 +149,7 @@ const Home = () => {
             lineHeight: 1,
             marginBottom: '20px',
           }}>
-            PETALMZDE
+            petalmzde
           </h1>
 
           <p style={{
@@ -184,7 +159,7 @@ const Home = () => {
             maxWidth: '600px',
             margin: '0 auto 48px',
           }}>
-            Flores únicas e personalizadas que não murcham para decorar, presentear e eternizar os seus momentos.
+            💜💐✨ Eternizando momentos especiais
           </p>
 
           {/* Social buttons */}
@@ -343,11 +318,12 @@ const Home = () => {
 
       {/* ── FOOTER ── */}
       <footer style={{
-        background: gradients.dark,
-        color: 'white',
+        background: colors.purple[100],
+        color: colors.purple[900],
         padding: isMobile ? '48px 20px' : 'clamp(52px, 8vw, 72px) 20px',
         width: '100%',
         boxSizing: 'border-box',
+        borderTop: `1px solid ${colors.purple[200]}`,
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -358,18 +334,17 @@ const Home = () => {
         }}>
           {/* Brand */}
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-              <img src={logo} alt="Petalmzde" style={{ height: '40px', objectFit: 'contain' }} />
-              <span style={{ fontWeight: 800, fontSize: '18px', letterSpacing: '0.05em' }}>PETALMZDE</span>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '14px', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+              <img src={logo} alt="Petalmzde" style={{ height: '44px', objectFit: 'contain' }} />
             </div>
-            <p style={{ opacity: 0.75, lineHeight: 1.7, fontSize: '15px', maxWidth: '260px', margin: isMobile ? '0 auto' : '0' }}>
+            <p style={{ color: colors.purple[700], lineHeight: 1.7, fontSize: '15px', maxWidth: '260px', margin: isMobile ? '0 auto' : '0' }}>
               Flores artificiais personalizadas feitas com amor para eternizar seus momentos especiais.
             </p>
           </div>
 
           {/* Links */}
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', opacity: 0.9 }}>Links rápidos</h4>
+            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', color: colors.purple[900] }}>Links rápidos</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', alignItems: isMobile ? 'center' : 'flex-start' }}>
               {[
                 { label: 'Início', href: '/' },
@@ -377,9 +352,9 @@ const Home = () => {
                 { label: 'Loja Shopee', href: 'https://shopee.com.br/petalmzde' },
               ].map(({ label, href }) => (
                 <li key={label}>
-                  <a href={href} style={{ color: 'white', opacity: 0.75, textDecoration: 'none', fontSize: '15px', transition: 'opacity 0.2s' }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-                    onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
+                  <a href={href} style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.color = colors.purple[900]}
+                    onMouseLeave={e => e.currentTarget.style.color = colors.purple[700]}
                   >
                     {label}
                   </a>
@@ -390,13 +365,13 @@ const Home = () => {
 
           {/* Contato */}
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', opacity: 0.9 }}>Contato</h4>
+            <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', color: colors.purple[900] }}>Contato</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: isMobile ? 'center' : 'flex-start' }}>
               {socialLinks.map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                  style={{ color: 'white', opacity: 0.75, textDecoration: 'none', fontSize: '15px', transition: 'opacity 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-                  onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
+                  style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = colors.purple[900]}
+                  onMouseLeave={e => e.currentTarget.style.color = colors.purple[700]}
                 >
                   {label}
                 </a>
@@ -408,14 +383,14 @@ const Home = () => {
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
+          borderTop: `1px solid ${colors.purple[200]}`,
           marginTop: isMobile ? '40px' : '52px',
           paddingTop: '28px',
           textAlign: 'center',
-          opacity: 0.5,
+          color: colors.purple[600],
           fontSize: '13px',
         }}>
-          © {new Date().getFullYear()} PETALMZDE — Todos os direitos reservados.
+          © {new Date().getFullYear()} petalmzde — Todos os direitos reservados.
         </div>
       </footer>
     </div>
