@@ -360,7 +360,7 @@ const Home = () => {
               {[
                 { label: 'Início', href: '/' },
                 { label: 'Produtos', href: '/produtos' },
-                { label: 'TikTok', href: 'https://www.tiktok.com/@petalmzde' },
+                { label: 'Loja Shopee', href: 'https://shopee.com.br/petalmzde' },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <a href={href} style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
@@ -378,7 +378,7 @@ const Home = () => {
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
             <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', color: colors.purple[900] }}>Contato</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: isMobile ? 'center' : 'flex-start' }}>
-              {socialLinks.map(({ label, href }) => (
+              {socialLinks.filter(({ label }) => label !== 'Shopee').map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                   style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
                   onMouseEnter={e => e.currentTarget.style.color = colors.purple[900]}
