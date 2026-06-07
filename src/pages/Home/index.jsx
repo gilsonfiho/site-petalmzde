@@ -401,7 +401,7 @@ const Home = () => {
           color: colors.purple[600],
           fontSize: '13px',
         }}>
-          © {new Date().getFullYear()} petalmzde — Todos os direitos reservados.
+          © {new Date().getFullYear()} petalmzde. Todos os direitos reservados.
         </div>
       </footer>
     </div>
