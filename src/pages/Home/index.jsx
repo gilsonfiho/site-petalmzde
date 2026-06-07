@@ -41,6 +41,17 @@ const socialLinks = [
       </svg>
     ),
   },
+  {
+    label: 'TikTok',
+    href: 'https://www.tiktok.com/@petalmzde',
+    bg: 'linear-gradient(135deg, #010101 0%, #2B2B2B 100%)',
+    glow: 'rgba(0,0,0,0.35)',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/>
+      </svg>
+    ),
+  },
 ];
 
 const whyUs = [
@@ -367,7 +378,7 @@ const Home = () => {
           <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
             <h4 style={{ fontWeight: 700, marginBottom: '16px', fontSize: '16px', color: colors.purple[900] }}>Contato</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: isMobile ? 'center' : 'flex-start' }}>
-              {socialLinks.map(({ label, href }) => (
+              {socialLinks.filter(({ label }) => label !== 'Shopee').map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                   style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
                   onMouseEnter={e => e.currentTarget.style.color = colors.purple[900]}
@@ -390,7 +401,7 @@ const Home = () => {
           color: colors.purple[600],
           fontSize: '13px',
         }}>
-          © {new Date().getFullYear()} petalmzde — Todos os direitos reservados.
+          © {new Date().getFullYear()} petalmzde. Todos os direitos reservados.
         </div>
       </footer>
     </div>
