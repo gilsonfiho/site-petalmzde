@@ -360,7 +360,7 @@ const Home = () => {
               {[
                 { label: 'Início', href: '/' },
                 { label: 'Produtos', href: '/produtos' },
-                { label: 'Loja Shopee', href: 'https://shopee.com.br/petalmzde' },
+                { label: 'TikTok', href: 'https://www.tiktok.com/@petalmzde' },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <a href={href} style={{ color: colors.purple[700], textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}
