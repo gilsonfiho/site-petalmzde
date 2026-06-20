@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../../assets/Logo.png';
 import { colors, gradients, shadows } from '../../styles/theme';
 import { products } from '../../data/products';
+import MonteBuque from './MonteBuque';
 
 const WA_NUMBER = '5585920057498';
 const WA_MSG = encodeURIComponent('Olá! Vim pelo site e gostaria de saber mais sobre os arranjos 🌸');
@@ -62,7 +63,8 @@ const whyUs = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile]   = useState(window.innerWidth < 768);
+  const [activeTab, setActiveTab] = useState('monte');
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -213,54 +215,100 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── PRODUTOS EM DESTAQUE ── */}
+      {/* ── ABAS: MONTE SEU BUQUÊ / PRODUTOS EM DESTAQUE ── */}
       <section style={{
         background: 'white',
-        padding: isMobile ? '50px 20px' : 'clamp(60px, 10vw, 80px) 20px',
+        padding: isMobile ? '40px 20px 50px' : 'clamp(52px, 8vw, 72px) 20px',
         width: '100%',
         boxSizing: 'border-box',
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isMobile ? '32px' : 'clamp(36px, 6vw, 52px)' }}>
-            <div>
-              <p style={{ fontSize: '12px', fontWeight: 700, color: colors.purple[600], letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>
-                🌸 Nossos arranjos
-              </p>
-              <h2 style={{ fontSize: isMobile ? '26px' : 'clamp(28px, 4vw, 36px)', fontWeight: 800, color: colors.gray[900], margin: 0 }}>
-                Produtos em destaque
-              </h2>
-            </div>
-            <button
-              onClick={() => navigate('/produtos')}
-              style={{
-                background: gradients.button,
-                color: 'white',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: isMobile ? '13px' : '15px',
-                padding: isMobile ? '10px 18px' : '12px 24px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                whiteSpace: 'nowrap',
-                boxShadow: shadows.md,
-                flexShrink: 0,
-              }}
-            >
-              Ver todos →
-            </button>
+
+          {/* Tab bar */}
+          <div style={{
+            display: 'flex',
+            borderBottom: `2px solid ${colors.purple[200]}`,
+            marginBottom: isMobile ? '28px' : '40px',
+            gap: '4px',
+          }}>
+            {[
+              { key: 'monte',    label: '💐 Monte seu Buquê' },
+              { key: 'produtos', label: '🌸 Produtos em destaque' },
+            ].map(tab => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: isActive ? `3px solid ${colors.purple[600]}` : '3px solid transparent',
+                    color: isActive ? colors.purple[700] : colors.purple[400],
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: isMobile ? '13px' : '15px',
+                    padding: isMobile ? '10px 14px 12px' : '12px 20px 14px',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    marginBottom: '-2px',
+                    transition: 'color 0.2s, border-color 0.2s',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = colors.purple[600]; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = colors.purple[400]; }}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: isMobile ? '14px' : 'clamp(18px, 3vw, 28px)',
-            width: '100%',
-          }}>
-            {products.map(({ name, image }) => (
-              <ProductCard key={name} name={name} image={image} waNumber={WA_NUMBER} isMobile={isMobile} />
-            ))}
-          </div>
+          {/* Conteúdo da aba ativa */}
+          {activeTab === 'monte' ? (
+            <MonteBuque isMobile={isMobile} />
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isMobile ? '32px' : 'clamp(36px, 6vw, 52px)' }}>
+                <div>
+                  <p style={{ fontSize: '12px', fontWeight: 700, color: colors.purple[600], letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    🌸 Nossos arranjos
+                  </p>
+                  <h2 style={{ fontSize: isMobile ? '26px' : 'clamp(28px, 4vw, 36px)', fontWeight: 800, color: colors.gray[900], margin: 0 }}>
+                    Produtos em destaque
+                  </h2>
+                </div>
+                <button
+                  onClick={() => navigate('/produtos')}
+                  style={{
+                    background: gradients.button,
+                    color: 'white',
+                    border: 'none',
+                    fontWeight: 700,
+                    fontSize: isMobile ? '13px' : '15px',
+                    padding: isMobile ? '10px 18px' : '12px 24px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    whiteSpace: 'nowrap',
+                    boxShadow: shadows.md,
+                    flexShrink: 0,
+                  }}
+                >
+                  Ver todos →
+                </button>
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(260px, 1fr))',
+                gap: isMobile ? '14px' : 'clamp(18px, 3vw, 28px)',
+                width: '100%',
+              }}>
+                {products.map(({ name, image }) => (
+                  <ProductCard key={name} name={name} image={image} waNumber={WA_NUMBER} isMobile={isMobile} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
