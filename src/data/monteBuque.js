@@ -1,4 +1,5 @@
 import folhagem1 from '../../assets/MonteBuque/folhagem_(modelo_1).jpeg';
+import gerbera from '../../assets/MonteBuque/Gérbera.jpeg';
 import girassol1 from '../../assets/MonteBuque/girassol_(modelo1).jpeg';
 import lirio1 from '../../assets/MonteBuque/lirio_(modelo_1).jpeg';
 import lirio2 from '../../assets/MonteBuque/lirio_(modelo_2).jpeg';
@@ -17,6 +18,7 @@ import polaroid from '../../assets/MonteBuque/Adicionais/polaroid.jpeg';
 
 export const flores = [
   { id: 'folhagem1',      name: 'Folhagem (Modelo 1)',          image: folhagem1 },
+  { id: 'gerbera',        name: 'Gérbera',                     image: gerbera },
   { id: 'girassol1',      name: 'Girassol (Modelo 1)',          image: girassol1 },
   { id: 'lirio1',         name: 'Lírio (Modelo 1)',             image: lirio1 },
   { id: 'lirio2',         name: 'Lírio (Modelo 2)',             image: lirio2 },

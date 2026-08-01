@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../../assets/Logo.png';
 import { colors, gradients, shadows } from '../../styles/theme';
-import { products } from '../../data/products';
+import { products, formatBRL, discountPercent } from '../../data/products';
 
 const WA_NUMBER = '5585920057498';
 const WA_MSG = encodeURIComponent('Olá! Vim pelo site e gostaria de saber mais sobre os arranjos 🌸');
@@ -117,78 +117,78 @@ const Produtos = () => {
           gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(260px, 1fr))',
           gap: isMobile ? '14px' : 'clamp(18px, 3vw, 28px)',
         }}>
-          {products.map(({ name, image }) => {
+          {products.map(({ name, image, price, oldPrice }) => {
             const msg = encodeURIComponent(`Olá! Tenho interesse no produto: ${name} 🌸`);
+            const off = discountPercent(price, oldPrice);
             return (
-              <div
+              <a
                 key={name}
+                href={`https://wa.me/${WA_NUMBER}?text=${msg}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
-                  background: 'white',
-                  border: `1px solid ${colors.purple[200]}`,
-                  borderRadius: '18px',
-                  overflow: 'hidden',
-                  boxShadow: shadows.card,
                   display: 'flex',
                   flexDirection: 'column',
-                  transition: 'transform 0.25s, box-shadow 0.25s, border-color 0.25s',
+                  textDecoration: 'none',
+                  transition: 'transform 0.25s',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'translateY(-8px)';
-                  e.currentTarget.style.boxShadow = `0 20px 40px ${colors.purple[600]}25`;
-                  e.currentTarget.style.borderColor = colors.purple[400];
+                  e.currentTarget.style.transform = 'translateY(-6px)';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = shadows.card;
-                  e.currentTarget.style.borderColor = colors.purple[200];
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.transform = 'scale(1)';
                 }}
               >
-                <div style={{ width: '100%', aspectRatio: '1 / 1', overflow: 'hidden', background: colors.lavender[200] }}>
+                <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
                   <img
                     src={image}
                     alt={name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
-                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                    style={{ width: '100%', height: 'auto', display: 'block', transition: 'transform 0.4s' }}
                   />
+                  {off > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '10px',
+                      left: '10px',
+                      background: '#2E9E4F',
+                      color: 'white',
+                      fontSize: isMobile ? '11px' : '12px',
+                      fontWeight: 700,
+                      padding: '4px 10px',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    }}>
+                      {off}% OFF
+                    </span>
+                  )}
                 </div>
-                <div style={{ padding: isMobile ? '14px 12px 16px' : '20px 20px 22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <div style={{ padding: isMobile ? '10px 4px 0' : '12px 4px 0', textAlign: 'center' }}>
                   <p style={{
                     fontSize: isMobile ? '13px' : '15px',
                     fontWeight: 600,
                     color: colors.gray[800],
-                    lineHeight: 1.4,
-                    marginBottom: '16px',
-                    flex: 1,
+                    lineHeight: 1.35,
+                    margin: '0 0 6px',
+                    minHeight: isMobile ? '36px' : '42px',
                   }}>
                     {name}
                   </p>
-                  <a
-                    href={`https://wa.me/${WA_NUMBER}?text=${msg}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
-                      color: 'white',
-                      fontSize: isMobile ? '13px' : '14px',
-                      fontWeight: 700,
-                      padding: isMobile ? '10px' : '12px',
-                      borderRadius: '10px',
-                      textDecoration: 'none',
-                      boxShadow: '0 4px 14px rgba(37,211,102,0.3)',
-                      transition: 'opacity 0.2s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-                    onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-                  >
-                    💬 Pedir orçamento
-                  </a>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 800, color: colors.purple[700] }}>
+                      {formatBRL(price)}
+                    </span>
+                    {oldPrice && (
+                      <span style={{ fontSize: isMobile ? '12px' : '13px', color: colors.gray[400], textDecoration: 'line-through' }}>
+                        {formatBRL(oldPrice)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </a>
             );
           })}
         </div>
