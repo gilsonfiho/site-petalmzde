@@ -170,12 +170,12 @@ const Home = () => {
             opacity: 0.9,
             lineHeight: 1.7,
             maxWidth: '600px',
-            margin: '0 auto 48px',
+            margin: '0 auto',
           }}>
             💜💐✨ Eternizando momentos especiais
           </p>
 
-          {/* Social buttons */}
+          {/* Social buttons — ocultados temporariamente a pedido
           <div style={{
             display: 'flex',
             gap: isMobile ? '12px' : '16px',
@@ -212,6 +212,7 @@ const Home = () => {
               </a>
             ))}
           </div>
+          */}
         </div>
       </section>
 
