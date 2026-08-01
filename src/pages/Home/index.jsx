@@ -233,7 +233,7 @@ const Home = () => {
           }}>
             {[
               { key: 'monte',    label: '💐 Monte seu Buquê' },
-              { key: 'produtos', label: '🌸 Produtos em destaque' },
+              { key: 'produtos', label: 'Buquês 💐💜✨' },
             ].map(tab => {
               const isActive = activeTab === tab.key;
               return (
@@ -274,7 +274,7 @@ const Home = () => {
                     🌸 Nossos arranjos
                   </p>
                   <h2 style={{ fontSize: isMobile ? '26px' : 'clamp(28px, 4vw, 36px)', fontWeight: 800, color: colors.gray[900], margin: 0 }}>
-                    Produtos em destaque
+                    Buquês 💐💜✨
                   </h2>
                 </div>
                 <button
