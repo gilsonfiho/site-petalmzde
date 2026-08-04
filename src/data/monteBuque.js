@@ -17,14 +17,14 @@ import led from '../../assets/MonteBuque/Adicionais/led.jpeg';
 import polaroid from '../../assets/MonteBuque/Adicionais/polaroid.jpeg';
 
 export const flores = [
-  { id: 'folhagem1',      name: 'Folhagem (Modelo 1)',          image: folhagem1 },
+  { id: 'folhagem1',      name: 'Folhagem (Modelo 1)',          image: folhagem1, fixedColor: true },
   { id: 'gerbera',        name: 'Gérbera',                     image: gerbera },
-  { id: 'girassol1',      name: 'Girassol (Modelo 1)',          image: girassol1 },
+  { id: 'girassol1',      name: 'Girassol (Modelo 1)',          image: girassol1, fixedColor: true },
   { id: 'lirio1',         name: 'Lírio (Modelo 1)',             image: lirio1 },
   { id: 'lirio2',         name: 'Lírio (Modelo 2)',             image: lirio2 },
   { id: 'lirio3',         name: 'Lírio (Modelo 3)',             image: lirio3 },
   { id: 'lirioP',         name: 'Lírio (Tamanho P)',            image: lirioP },
-  { id: 'lirioRapunzel',  name: 'Lírio Rapunzel',              image: lirioRapunzel },
+  { id: 'lirioRapunzel',  name: 'Lírio Rapunzel',              image: lirioRapunzel, fixedColor: true },
   { id: 'margaridaP',     name: 'Margarida (Tamanho P)',        image: margaridaP },
   { id: 'miniFlorzinhas', name: 'Mini Florzinhas (Ornamentação)', image: miniFlorzinhas },
   { id: 'rosa1',          name: 'Rosa (Modelo 1)',              image: rosa1 },
