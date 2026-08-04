@@ -4,6 +4,7 @@ import encantoRose from '../../assets/Buquê Encanto Rosê.jpeg';
 import blueBloom from '../../assets/Buquê Blue Bloom.jpeg';
 import chaveiro from '../../assets/Chaveiro Pascal.png';
 import vanGogh from '../../assets/Buquê Van Gogh.jpeg';
+import zoro from '../../assets/Buquê Zoro One Piece.jpeg';
 
 export const products = [
   { name: 'Buquê dois lírios', image: lirios,      price: 89.90,  oldPrice: 104.90 },
@@ -11,6 +12,7 @@ export const products = [
   { name: 'Buquê Encanto Rosê',                       image: encantoRose, price: 179.90, oldPrice: 204.90 },
   { name: 'Buquê Blue Bloom',                         image: blueBloom,   price: 105.90, oldPrice: 149.90 },
   { name: 'Buquê Van Gogh (G)',                       image: vanGogh,     price: 204.90, oldPrice: 249.90 },
+  { name: 'Buquê Zoro One Piece',                     image: zoro,        price: 134.99, oldPrice: 169.90 },
   { name: 'Chaveiro Pascal',                          image: chaveiro,    price: 34.99 },
 ];
 

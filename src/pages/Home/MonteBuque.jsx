@@ -6,8 +6,33 @@ const WA_NUMBER = '5585920057498';
 
 const initQty = (items) => Object.fromEntries(items.map(({ id }) => [id, 0]));
 
+/* Paleta de cores disponíveis para as flores */
+const flowerColors = [
+  { name: 'Rosa claro',     hex: '#F7A8C4' },
+  { name: 'Rosa escuro',    hex: '#D6336C' },
+  { name: 'Lilás',          hex: '#B39DDB' },
+  { name: 'Amarelo ouro',   hex: '#F5C518' },
+  { name: 'Vermelho',       hex: '#E53935' },
+  { name: 'Roxo',           hex: '#7B2CBF' },
+  { name: 'Verde claro',    hex: '#A5D6A7' },
+  { name: 'Verde musgo',    hex: '#7A8450' },
+  { name: 'Verde bandeira', hex: '#2E7D32' },
+  { name: 'Branco',         hex: '#FFFFFF' },
+  { name: 'Azul claro',     hex: '#90CAF9' },
+  { name: 'Azul escuro',    hex: '#0D47A1' },
+  { name: 'Azul médio',     hex: '#2196F3' },
+  { name: 'Laranja',        hex: '#FB8C00' },
+  { name: 'Bege',           hex: '#E3D5B8' },
+  { name: 'Preto',          hex: '#212121' },
+  { name: 'Marrom',         hex: '#8D5524' },
+];
+
+const hexOf = (name) => flowerColors.find(c => c.name === name)?.hex || '#CCC';
+
 /* ── Card individual de flor / adicional ── */
-const ItemCard = ({ item, qty, onInc, onDec, isMobile }) => (
+const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedColor, onSelectColor }) => {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  return (
   <div style={{
     background: '#F0F7F0',
     border: '1px solid #C8E6C9',
@@ -25,16 +50,95 @@ const ItemCard = ({ item, qty, onInc, onDec, isMobile }) => (
       />
     </div>
     <div style={{ padding: isMobile ? '10px' : '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <p style={{
-        fontSize: isMobile ? '11px' : '13px',
-        fontWeight: 600,
-        color: '#2E4A2E',
-        lineHeight: 1.35,
-        margin: 0,
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: '6px',
         minHeight: isMobile ? '32px' : '36px',
       }}>
-        {item.name}
-      </p>
+        <p style={{
+          fontSize: isMobile ? '11px' : '13px',
+          fontWeight: 600,
+          color: '#2E4A2E',
+          lineHeight: 1.35,
+          margin: 0,
+        }}>
+          {item.name}
+        </p>
+        {showColorTag && (
+          <>
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(o => !o)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: selectedColor ? colors.purple[600] : colors.purple[100],
+                color: selectedColor ? 'white' : colors.purple[700],
+                fontSize: isMobile ? '10px' : '11px',
+                fontWeight: 700,
+                padding: '3px 9px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              {selectedColor ? (
+                <>
+                  <span style={{
+                    width: '11px', height: '11px', borderRadius: '50%',
+                    background: hexOf(selectedColor),
+                    border: '1px solid rgba(255,255,255,0.7)',
+                    flexShrink: 0,
+                  }} />
+                  {selectedColor}
+                </>
+              ) : '🎨 Escolha a cor'}
+            </button>
+            {paletteOpen && (
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '6px',
+                padding: '8px',
+                background: 'white',
+                borderRadius: '10px',
+                border: `1px solid ${colors.purple[200]}`,
+                width: '100%',
+                boxSizing: 'border-box',
+              }}>
+                {flowerColors.map(c => {
+                  const active = selectedColor === c.name;
+                  return (
+                    <button
+                      key={c.name}
+                      type="button"
+                      title={c.name}
+                      onClick={() => { onSelectColor(active ? null : c.name); setPaletteOpen(false); }}
+                      style={{
+                        width: '22px',
+                        height: '22px',
+                        borderRadius: '50%',
+                        background: c.hex,
+                        border: c.name === 'Branco' ? '1px solid #CCC' : '1px solid rgba(0,0,0,0.1)',
+                        outline: active ? `2px solid ${colors.purple[600]}` : 'none',
+                        outlineOffset: '1px',
+                        cursor: 'pointer',
+                        padding: 0,
+                        flexShrink: 0,
+                      }}
+                      aria-label={c.name}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
         <button
           onClick={onDec}
@@ -95,15 +199,17 @@ const ItemCard = ({ item, qty, onInc, onDec, isMobile }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 /* ── Componente principal ── */
 const MonteBuque = ({ isMobile }) => {
-  const [florQty, setFlorQty]   = useState(() => initQty(flores));
-  const [adicQty, setAdicQty]   = useState(() => initQty(adicionais));
+  const [florQty, setFlorQty]     = useState(() => initQty(flores));
+  const [adicQty, setAdicQty]     = useState(() => initQty(adicionais));
+  const [florColor, setFlorColor] = useState({});
 
   const selectedItems = [
-    ...flores.map(f    => ({ ...f, qty: florQty[f.id] })),
+    ...flores.map(f    => ({ ...f, qty: florQty[f.id], color: florColor[f.id] })),
     ...adicionais.map(a => ({ ...a, qty: adicQty[a.id] })),
   ].filter(i => i.qty > 0);
 
@@ -115,7 +221,10 @@ const MonteBuque = ({ isMobile }) => {
     const adicSel = adicionais.filter(a => adicQty[a.id] > 0);
     if (florSel.length) {
       lines.push('*Flores:*');
-      florSel.forEach(f => lines.push(`- ${f.name}: ${florQty[f.id]}x`));
+      florSel.forEach(f => {
+        const color = !f.fixedColor && florColor[f.id] ? ` (cor: ${florColor[f.id]})` : '';
+        lines.push(`- ${f.name}${color}: ${florQty[f.id]}x`);
+      });
     }
     if (adicSel.length) {
       lines.push('\n*Adicionais:*');
@@ -188,7 +297,15 @@ const MonteBuque = ({ isMobile }) => {
               justifyContent: 'space-between',
               gap: '8px',
             }}>
-              <span>{i.name}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                {i.color && (
+                  <span style={{
+                    width: '10px', height: '10px', borderRadius: '50%',
+                    background: hexOf(i.color), border: '1px solid rgba(0,0,0,0.15)', flexShrink: 0,
+                  }} />
+                )}
+                {i.name}{i.color ? ` · ${i.color}` : ''}
+              </span>
               <span style={{ fontWeight: 700, flexShrink: 0 }}>×{i.qty}</span>
             </li>
           ))}
@@ -253,6 +370,9 @@ const MonteBuque = ({ isMobile }) => {
                   item={f}
                   qty={florQty[f.id]}
                   isMobile={isMobile}
+                  showColorTag={!f.fixedColor}
+                  selectedColor={florColor[f.id] || null}
+                  onSelectColor={(c) => setFlorColor(prev => ({ ...prev, [f.id]: c }))}
                   onInc={() => setFlorQty(q => ({ ...q, [f.id]: q[f.id] + 1 }))}
                   onDec={() => setFlorQty(q => ({ ...q, [f.id]: Math.max(0, q[f.id] - 1) }))}
                 />
