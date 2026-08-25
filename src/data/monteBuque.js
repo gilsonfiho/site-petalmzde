@@ -1,6 +1,7 @@
 import folhagem1 from '../../assets/MonteBuque/folhagem_(modelo_1).jpeg';
 import gerbera from '../../assets/MonteBuque/Gérbera.jpeg';
 import girassol1 from '../../assets/MonteBuque/girassol_(modelo1).jpeg';
+import girassolG from '../../assets/MonteBuque/Girassol Tamanho G.jpeg';
 import lirio1 from '../../assets/MonteBuque/lirio_(modelo_1).jpeg';
 import lirio2 from '../../assets/MonteBuque/lirio_(modelo_2).jpeg';
 import lirio3 from '../../assets/MonteBuque/lirio_(modelo_3).jpeg';
@@ -14,12 +15,14 @@ import tulipa from '../../assets/MonteBuque/tulipa.jpeg';
 import cartao from '../../assets/MonteBuque/Adicionais/cartao_mensagem.jpeg';
 import imagemAdicional from '../../assets/MonteBuque/Adicionais/imagem_adicional.jpeg';
 import led from '../../assets/MonteBuque/Adicionais/led.jpeg';
+import snoopy from '../../assets/MonteBuque/Adicionais/Snoopy 10cm.jpeg';
 import polaroid from '../../assets/MonteBuque/Adicionais/polaroid.jpeg';
 
 export const flores = [
   { id: 'folhagem1',      name: 'Folhagem (Modelo 1)',          image: folhagem1, fixedColor: true },
   { id: 'gerbera',        name: 'Gérbera',                     image: gerbera },
   { id: 'girassol1',      name: 'Girassol (Modelo 1)',          image: girassol1, fixedColor: true },
+  { id: 'girassolG',      name: 'Girassol (Tamanho G)',         image: girassolG, fixedColor: true },
   { id: 'lirio1',         name: 'Lírio (Modelo 1)',             image: lirio1 },
   { id: 'lirio2',         name: 'Lírio (Modelo 2)',             image: lirio2 },
   { id: 'lirio3',         name: 'Lírio (Modelo 3)',             image: lirio3 },
@@ -36,4 +39,5 @@ export const adicionais = [
   { id: 'imagemAdicional', name: 'Imagem Adicional', image: imagemAdicional },
   { id: 'led',             name: 'Led',              image: led },
   { id: 'polaroid',        name: 'Polaroid',         image: polaroid },
+  { id: 'snoopy',          name: 'Snoopy 10cm',      image: snoopy },
 ];
