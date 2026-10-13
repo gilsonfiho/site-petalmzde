@@ -143,11 +143,11 @@ const Produtos = () => {
                   if (img) img.style.transform = 'scale(1)';
                 }}
               >
-                <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', width: '100%', aspectRatio: '3 / 4', overflow: 'hidden', background: colors.lavender[200] }}>
                   <img
                     src={image}
                     alt={name}
-                    style={{ width: '100%', height: 'auto', display: 'block', transition: 'transform 0.4s' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
                   />
                   {off > 0 && (
                     <span style={{
