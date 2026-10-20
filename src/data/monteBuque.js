@@ -16,6 +16,7 @@ import cartao from '../../assets/MonteBuque/Adicionais/cartao_mensagem.jpeg';
 import imagemAdicional from '../../assets/MonteBuque/Adicionais/imagem_adicional.jpeg';
 import led from '../../assets/MonteBuque/Adicionais/led.jpeg';
 import snoopy from '../../assets/MonteBuque/Adicionais/Snoopy 10cm.jpeg';
+import chaveiroFoto from '../../assets/MonteBuque/Adicionais/Chaveiro com Foto.jpeg';
 import polaroid from '../../assets/MonteBuque/Adicionais/polaroid.jpeg';
 
 export const flores = [
@@ -40,4 +41,5 @@ export const adicionais = [
   { id: 'led',             name: 'Led',              image: led },
   { id: 'polaroid',        name: 'Polaroid',         image: polaroid },
   { id: 'snoopy',          name: 'Snoopy 10cm',      image: snoopy },
+  { id: 'chaveiroFoto',    name: 'Chaveiro com Foto', image: chaveiroFoto },
 ];

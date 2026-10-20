@@ -8,6 +8,7 @@ import zoro from '../../assets/Buquê Zoro One Piece.jpeg';
 import liriosAzuis from '../../assets/Buquê Lírios Azuis.jpeg';
 import homemAranha from '../../assets/Buquê Homem Aranha Pelúcia.jpeg';
 import snoopy from '../../assets/Buquê Snoopy.jpeg';
+import rosasVermelhas from '../../assets/Buquê Rosas Vermelhas.jpeg';
 
 export const products = [
   { name: 'Buquê dois lírios', image: lirios,      price: 89.90,  oldPrice: 104.90 },
@@ -19,6 +20,7 @@ export const products = [
   { name: 'Buquê Lírios Azuis (Personalizável)',      image: liriosAzuis, price: 159.99 },
   { name: 'Buquê Homem Aranha Pelúcia (Personalizável)', image: homemAranha, price: 149.99 },
   { name: 'Buquê Snoopy (Personalizável)',            image: snoopy,      price: 189.99 },
+  { name: 'Buquê Rosas Vermelhas',                    image: rosasVermelhas, price: 260.00, oldPrice: 300.00 },
   { name: 'Chaveiro Pascal',                          image: chaveiro,    price: 25.00 },
 ];
 
