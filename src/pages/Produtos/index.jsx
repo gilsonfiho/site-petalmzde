@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../../assets/Logo.png';
 import { colors, gradients, shadows } from '../../styles/theme';
-import { products, formatBRL, discountPercent } from '../../data/products';
+import { fetchProducts, formatBRL, discountPercent } from '../../lib/catalog';
 
 const WA_NUMBER = '5585920057498';
 const WA_MSG = encodeURIComponent('Olá! Vim pelo site e gostaria de saber mais sobre os arranjos 🌸');
@@ -10,11 +10,20 @@ const WA_MSG = encodeURIComponent('Olá! Vim pelo site e gostaria de saber mais 
 const Produtos = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    fetchProducts()
+      .then(setProducts)
+      .catch((e) => console.error('Erro ao carregar produtos:', e))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -112,17 +121,22 @@ const Produtos = () => {
         width: '100%',
         boxSizing: 'border-box',
       }}>
+        {loading ? (
+          <p style={{ textAlign: 'center', color: colors.purple[400], padding: '40px 0' }}>Carregando produtos…</p>
+        ) : products.length === 0 ? (
+          <p style={{ textAlign: 'center', color: colors.gray[500], padding: '40px 0' }}>Nenhum produto disponível no momento.</p>
+        ) : (
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(260px, 1fr))',
           gap: isMobile ? '14px' : 'clamp(18px, 3vw, 28px)',
         }}>
-          {products.map(({ name, image, price, oldPrice }) => {
+          {products.map(({ id, name, image, price, oldPrice }) => {
             const msg = encodeURIComponent(`Olá! Tenho interesse no produto: ${name} 🌸`);
             const off = discountPercent(price, oldPrice);
             return (
               <a
-                key={name}
+                key={id}
                 href={`https://wa.me/${WA_NUMBER}?text=${msg}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -192,6 +206,7 @@ const Produtos = () => {
             );
           })}
         </div>
+        )}
       </section>
 
       {/* CTA encomenda */}

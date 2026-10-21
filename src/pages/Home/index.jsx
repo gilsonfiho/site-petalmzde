@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../../assets/Logo.png';
 import { colors, gradients, shadows } from '../../styles/theme';
-import { products, formatBRL, discountPercent } from '../../data/products';
+import { fetchProducts, formatBRL, discountPercent } from '../../lib/catalog';
 import MonteBuque from './MonteBuque';
 
 const WA_NUMBER = '5585920057498';
@@ -65,6 +65,15 @@ const Home = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile]   = useState(window.innerWidth < 768);
   const [activeTab, setActiveTab] = useState('monte');
+  const [products, setProducts]   = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  useEffect(() => {
+    fetchProducts()
+      .then(setProducts)
+      .catch((e) => console.error('Erro ao carregar produtos:', e))
+      .finally(() => setLoadingProducts(false));
+  }, []);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -298,16 +307,22 @@ const Home = () => {
                   Ver todos →
                 </button>
               </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(260px, 1fr))',
-                gap: isMobile ? '14px' : 'clamp(18px, 3vw, 28px)',
-                width: '100%',
-              }}>
-                {products.map((product) => (
-                  <ProductCard key={product.name} product={product} waNumber={WA_NUMBER} isMobile={isMobile} />
-                ))}
-              </div>
+              {loadingProducts ? (
+                <p style={{ textAlign: 'center', color: colors.purple[400], padding: '40px 0' }}>Carregando produtos…</p>
+              ) : products.length === 0 ? (
+                <p style={{ textAlign: 'center', color: colors.gray[500], padding: '40px 0' }}>Nenhum produto disponível no momento.</p>
+              ) : (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(260px, 1fr))',
+                  gap: isMobile ? '14px' : 'clamp(18px, 3vw, 28px)',
+                  width: '100%',
+                }}>
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} waNumber={WA_NUMBER} isMobile={isMobile} />
+                  ))}
+                </div>
+              )}
             </>
           )}
         </div>

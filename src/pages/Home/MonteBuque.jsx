@@ -1,10 +1,8 @@
-import { useState } from 'react';
-import { flores, adicionais } from '../../data/monteBuque';
+import { useState, useEffect } from 'react';
+import { fetchMonteItems } from '../../lib/catalog';
 import { colors } from '../../styles/theme';
 
 const WA_NUMBER = '5585920057498';
-
-const initQty = (items) => Object.fromEntries(items.map(({ id }) => [id, 0]));
 
 /* Paleta de cores disponíveis para as flores */
 const flowerColors = [
@@ -204,13 +202,23 @@ const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedCol
 
 /* ── Componente principal ── */
 const MonteBuque = ({ isMobile }) => {
-  const [florQty, setFlorQty]     = useState(() => initQty(flores));
-  const [adicQty, setAdicQty]     = useState(() => initQty(adicionais));
-  const [florColor, setFlorColor] = useState({});
+  const [flores, setFlores]         = useState([]);
+  const [adicionais, setAdicionais] = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [florQty, setFlorQty]       = useState({});
+  const [adicQty, setAdicQty]       = useState({});
+  const [florColor, setFlorColor]   = useState({});
+
+  useEffect(() => {
+    fetchMonteItems()
+      .then(({ flores, adicionais }) => { setFlores(flores); setAdicionais(adicionais); })
+      .catch((e) => console.error('Erro ao carregar itens:', e))
+      .finally(() => setLoading(false));
+  }, []);
 
   const selectedItems = [
-    ...flores.map(f    => ({ ...f, qty: florQty[f.id], color: florColor[f.id] })),
-    ...adicionais.map(a => ({ ...a, qty: adicQty[a.id] })),
+    ...flores.map(f    => ({ ...f, qty: florQty[f.id] || 0, color: florColor[f.id] })),
+    ...adicionais.map(a => ({ ...a, qty: adicQty[a.id] || 0 })),
   ].filter(i => i.qty > 0);
 
   const hasItems = selectedItems.length > 0;
@@ -359,6 +367,10 @@ const MonteBuque = ({ isMobile }) => {
       }}>
         {/* Conteúdo: flores + adicionais */}
         <div style={{ flex: 1, minWidth: 0 }}>
+          {loading ? (
+            <p style={{ color: colors.purple[400], fontSize: '14px', padding: '20px 0' }}>Carregando itens…</p>
+          ) : (
+          <>
           <SectionTitle emoji="🌷" label="Flores" />
           {flores.length === 0 ? (
             <p style={{ color: '#9E9E9E', fontSize: '14px' }}>Nenhum item disponível</p>
@@ -368,13 +380,13 @@ const MonteBuque = ({ isMobile }) => {
                 <ItemCard
                   key={f.id}
                   item={f}
-                  qty={florQty[f.id]}
+                  qty={florQty[f.id] || 0}
                   isMobile={isMobile}
                   showColorTag={!f.fixedColor}
                   selectedColor={florColor[f.id] || null}
                   onSelectColor={(c) => setFlorColor(prev => ({ ...prev, [f.id]: c }))}
-                  onInc={() => setFlorQty(q => ({ ...q, [f.id]: q[f.id] + 1 }))}
-                  onDec={() => setFlorQty(q => ({ ...q, [f.id]: Math.max(0, q[f.id] - 1) }))}
+                  onInc={() => setFlorQty(q => ({ ...q, [f.id]: (q[f.id] || 0) + 1 }))}
+                  onDec={() => setFlorQty(q => ({ ...q, [f.id]: Math.max(0, (q[f.id] || 0) - 1) }))}
                 />
               ))}
             </div>
@@ -391,13 +403,15 @@ const MonteBuque = ({ isMobile }) => {
                 <ItemCard
                   key={a.id}
                   item={a}
-                  qty={adicQty[a.id]}
+                  qty={adicQty[a.id] || 0}
                   isMobile={isMobile}
-                  onInc={() => setAdicQty(q => ({ ...q, [a.id]: q[a.id] + 1 }))}
-                  onDec={() => setAdicQty(q => ({ ...q, [a.id]: Math.max(0, q[a.id] - 1) }))}
+                  onInc={() => setAdicQty(q => ({ ...q, [a.id]: (q[a.id] || 0) + 1 }))}
+                  onDec={() => setAdicQty(q => ({ ...q, [a.id]: Math.max(0, (q[a.id] || 0) - 1) }))}
                 />
               ))}
             </div>
+          )}
+          </>
           )}
         </div>
 
