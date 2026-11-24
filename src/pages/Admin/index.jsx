@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import {
   fetchAllProducts, saveProduct, deleteProduct,
   fetchAllItems, saveItem, deleteItem,
+  fetchAllSizes, saveSize, deleteSize,
   uploadImage, formatBRL, discountPercent,
 } from '../../lib/catalog';
 import { colors, gradients } from '../../styles/theme';
@@ -155,10 +156,10 @@ const ProductForm = ({ initial, onSaved, onCancel }) => {
 /* ──────────────────────────────────────────────── */
 /*  FORM DE ITEM (Monte seu Buquê)                   */
 /* ──────────────────────────────────────────────── */
-const emptyItem = { name: '', image: '', category: 'flor', fixedColor: false, sortOrder: 0, active: true };
+const emptyItem = { name: '', image: '', category: 'flor', fixedColor: false, price: '', sortOrder: 0, active: true };
 
 const ItemForm = ({ initial, onSaved, onCancel }) => {
-  const [form, setForm] = useState(initial || emptyItem);
+  const [form, setForm] = useState(initial ? { ...initial, price: initial.price ?? '' } : emptyItem);
   const [enviando, setEnviando] = useState(false);
   const [salvando, setSalvando] = useState(false);
 
@@ -186,6 +187,7 @@ const ItemForm = ({ initial, onSaved, onCancel }) => {
         image: form.image,
         category: form.category,
         fixedColor: form.category === 'flor' ? form.fixedColor : false,
+        price: form.category === 'adicional' ? (Number(form.price) || 0) : null,
         sortOrder: Number(form.sortOrder) || 0,
         active: form.active,
       });
@@ -212,6 +214,7 @@ const ItemForm = ({ initial, onSaved, onCancel }) => {
       <label style={labelStyle}>Categoria</label>
       <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} style={inputStyle}>
         <option value="flor">Flor</option>
+        <option value="ornamentacao">Ornamentação</option>
         <option value="adicional">Adicional</option>
       </select>
 
@@ -220,6 +223,13 @@ const ItemForm = ({ initial, onSaved, onCancel }) => {
           <input type="checkbox" checked={form.fixedColor} onChange={e => setForm(f => ({ ...f, fixedColor: e.target.checked }))} />
           Cor fixa (não mostra a opção "Escolha a cor")
         </label>
+      )}
+
+      {form.category === 'adicional' && (
+        <>
+          <label style={labelStyle}>Preço do adicional (R$)</label>
+          <input type="number" step="0.01" min="0" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} style={inputStyle} />
+        </>
       )}
 
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -244,22 +254,98 @@ const ItemForm = ({ initial, onSaved, onCancel }) => {
 };
 
 /* ──────────────────────────────────────────────── */
+/*  FORM DE TAMANHO (valores do Monte seu Buquê)     */
+/* ──────────────────────────────────────────────── */
+const emptySize = { flowers: '', label: 'Buquê tamanho P', price: '', ornamentMax: '', sortOrder: 0, active: true };
+
+const SizeForm = ({ initial, onSaved, onCancel }) => {
+  const [form, setForm] = useState(initial || emptySize);
+  const [salvando, setSalvando] = useState(false);
+
+  const salvar = async (e) => {
+    e.preventDefault();
+    setSalvando(true);
+    try {
+      await saveSize({
+        id: form.id,
+        flowers: Number(form.flowers) || 0,
+        label: form.label,
+        price: Number(form.price) || 0,
+        ornamentMax: Number(form.ornamentMax) || 0,
+        sortOrder: Number(form.sortOrder) || 0,
+        active: form.active,
+      });
+      onSaved();
+    } catch (err) {
+      alert('Erro ao salvar: ' + err.message);
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  return (
+    <form onSubmit={salvar} style={cardForm}>
+      <h3 style={{ margin: '0 0 16px', color: colors.purple[700] }}>{form.id ? 'Editar tamanho' : 'Novo tamanho'}</h3>
+
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>Qtd. de flores</label>
+          <input type="number" min="1" value={form.flowers} onChange={e => setForm(f => ({ ...f, flowers: e.target.value }))} required style={inputStyle} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>Preço (R$)</label>
+          <input type="number" step="0.01" min="0" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required style={inputStyle} />
+        </div>
+      </div>
+
+      <label style={labelStyle}>Nome do tamanho</label>
+      <input value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))} required style={inputStyle} placeholder="Ex.: Buquê tamanho P" />
+
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>Máx. de ornamentações (total)</label>
+          <input type="number" min="0" value={form.ornamentMax} onChange={e => setForm(f => ({ ...f, ornamentMax: e.target.value }))} style={inputStyle} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={labelStyle}>Ordem</label>
+          <input type="number" value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: e.target.value }))} style={inputStyle} />
+        </div>
+      </div>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: colors.gray[700], margin: '12px 0 0' }}>
+        <input type="checkbox" checked={form.active} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} />
+        Ativo (disponível no site)
+      </label>
+
+      <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+        <button type="submit" disabled={salvando} style={{ ...btnPrimary, opacity: salvando ? 0.7 : 1 }}>{salvando ? 'Salvando…' : 'Salvar'}</button>
+        <button type="button" onClick={onCancel} style={btnGhost}>Cancelar</button>
+      </div>
+    </form>
+  );
+};
+
+/* ──────────────────────────────────────────────── */
 /*  DASHBOARD                                         */
 /* ──────────────────────────────────────────────── */
+const catLabel = { flor: 'Flor', ornamentacao: 'Ornamentação', adicional: 'Adicional' };
+
 const Dashboard = ({ session }) => {
   const navigate = useNavigate();
   const [aba, setAba] = useState('buques');
   const [produtos, setProdutos] = useState([]);
   const [itens, setItens] = useState([]);
+  const [tamanhos, setTamanhos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [editando, setEditando] = useState(null); // {tipo, data} ou null
 
   const recarregar = async () => {
     setCarregando(true);
     try {
-      const [p, i] = await Promise.all([fetchAllProducts(), fetchAllItems()]);
+      const [p, i, s] = await Promise.all([fetchAllProducts(), fetchAllItems(), fetchAllSizes()]);
       setProdutos(p);
       setItens(i);
+      setTamanhos(s);
     } catch (e) {
       console.error(e);
     } finally {
@@ -281,6 +367,14 @@ const Dashboard = ({ session }) => {
     await deleteItem(i.id);
     recarregar();
   };
+  const excluirTamanho = async (s) => {
+    if (!confirm(`Excluir o tamanho "${s.flowers} flores"?`)) return;
+    await deleteSize(s.id);
+    recarregar();
+  };
+
+  const novoLabel = { buques: 'Novo buquê', monte: 'Novo item', valores: 'Novo tamanho' };
+  const novoTipo = { buques: 'produto', monte: 'item', valores: 'tamanho' };
 
   const fecharForm = () => setEditando(null);
   const aposSalvar = () => { setEditando(null); recarregar(); };
@@ -301,22 +395,25 @@ const Dashboard = ({ session }) => {
 
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 20px 60px' }}>
         {/* Abas */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
           <button onClick={() => { setAba('buques'); setEditando(null); }} style={aba === 'buques' ? tabActive : tabInactive}>Buquês ({produtos.length})</button>
           <button onClick={() => { setAba('monte'); setEditando(null); }} style={aba === 'monte' ? tabActive : tabInactive}>Monte seu Buquê ({itens.length})</button>
+          <button onClick={() => { setAba('valores'); setEditando(null); }} style={aba === 'valores' ? tabActive : tabInactive}>Valores / Tamanhos ({tamanhos.length})</button>
         </div>
 
         {editando ? (
           editando.tipo === 'produto'
             ? <ProductForm initial={editando.data} onSaved={aposSalvar} onCancel={fecharForm} />
+            : editando.tipo === 'tamanho'
+            ? <SizeForm initial={editando.data} onSaved={aposSalvar} onCancel={fecharForm} />
             : <ItemForm initial={editando.data} onSaved={aposSalvar} onCancel={fecharForm} />
         ) : (
           <>
             <button
-              onClick={() => setEditando({ tipo: aba === 'buques' ? 'produto' : 'item', data: null })}
+              onClick={() => setEditando({ tipo: novoTipo[aba], data: null })}
               style={{ ...btnPrimary, marginBottom: '18px' }}
             >
-              + {aba === 'buques' ? 'Novo buquê' : 'Novo item'}
+              + {novoLabel[aba]}
             </button>
 
             {carregando ? (
@@ -340,7 +437,7 @@ const Dashboard = ({ session }) => {
                   </div>
                 ))}
               </div>
-            ) : (
+            ) : aba === 'monte' ? (
               <div style={{ display: 'grid', gap: '10px' }}>
                 {itens.map(i => (
                   <div key={i.id} style={rowCard}>
@@ -348,13 +445,31 @@ const Dashboard = ({ session }) => {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <strong style={{ color: colors.gray[800], fontSize: '14px' }}>{i.name}</strong>
                       <div style={{ fontSize: '12px', color: colors.gray[500] }}>
-                        {i.category === 'flor' ? 'Flor' : 'Adicional'}
+                        {catLabel[i.category] || i.category}
                         {i.category === 'flor' && i.fixedColor && ' · cor fixa'}
+                        {i.category === 'adicional' && i.price != null && ` · ${formatBRL(i.price)}`}
                       </div>
                       {!i.active && <span style={badgeOff}>inativo</span>}
                     </div>
                     <button onClick={() => setEditando({ tipo: 'item', data: i })} style={btnSmall}>Editar</button>
                     <button onClick={() => excluirItem(i)} style={btnDanger}>Excluir</button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gap: '10px' }}>
+                {tamanhos.map(s => (
+                  <div key={s.id} style={rowCard}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: colors.purple[100], color: colors.purple[700], display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '16px', flexShrink: 0 }}>{s.flowers}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <strong style={{ color: colors.gray[800], fontSize: '14px' }}>{s.flowers} flores · {s.label}</strong>
+                      <div style={{ fontSize: '13px', color: colors.purple[600] }}>
+                        {formatBRL(s.price)} · máx. {s.ornamentMax} ornamentações no total
+                      </div>
+                      {!s.active && <span style={badgeOff}>inativo</span>}
+                    </div>
+                    <button onClick={() => setEditando({ tipo: 'tamanho', data: s })} style={btnSmall}>Editar</button>
+                    <button onClick={() => excluirTamanho(s)} style={btnDanger}>Excluir</button>
                   </div>
                 ))}
               </div>

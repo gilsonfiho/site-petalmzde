@@ -24,8 +24,19 @@ const mapItem = (i) => ({
   image: i.image_url,
   category: i.category,
   fixedColor: i.fixed_color,
+  price: i.price != null ? Number(i.price) : null,
   sortOrder: i.sort_order,
   active: i.active,
+});
+
+const mapSize = (s) => ({
+  id: s.id,
+  flowers: s.flowers,
+  label: s.label,
+  price: Number(s.price),
+  ornamentMax: s.ornament_max,
+  sortOrder: s.sort_order,
+  active: s.active,
 });
 
 /* ───────── Leitura pública ───────── */
@@ -49,8 +60,19 @@ export async function fetchMonteItems() {
   const items = data.map(mapItem);
   return {
     flores: items.filter((i) => i.category === 'flor'),
+    ornamentacoes: items.filter((i) => i.category === 'ornamentacao'),
     adicionais: items.filter((i) => i.category === 'adicional'),
   };
+}
+
+export async function fetchSizes() {
+  const { data, error } = await supabase
+    .from('monte_buque_sizes')
+    .select('*')
+    .eq('active', true)
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data.map(mapSize);
 }
 
 /* ───────── Admin: leitura completa (inclui inativos) ───────── */
@@ -116,6 +138,7 @@ export async function saveItem(item) {
     image_url: item.image,
     category: item.category,
     fixed_color: item.fixedColor ?? false,
+    price: item.category === 'adicional' ? (item.price || 0) : null,
     sort_order: item.sortOrder ?? 0,
     active: item.active ?? true,
   };
@@ -130,5 +153,38 @@ export async function saveItem(item) {
 
 export async function deleteItem(id) {
   const { error } = await supabase.from('monte_buque_items').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/* ───────── Admin: CRUD de tamanhos do Monte seu Buquê ───────── */
+export async function fetchAllSizes() {
+  const { data, error } = await supabase
+    .from('monte_buque_sizes')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data.map(mapSize);
+}
+
+export async function saveSize(size) {
+  const row = {
+    flowers: Number(size.flowers) || 0,
+    label: size.label,
+    price: Number(size.price) || 0,
+    ornament_max: Number(size.ornamentMax) || 0,
+    sort_order: size.sortOrder ?? 0,
+    active: size.active ?? true,
+  };
+  if (size.id) {
+    const { error } = await supabase.from('monte_buque_sizes').update(row).eq('id', size.id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from('monte_buque_sizes').insert(row);
+    if (error) throw error;
+  }
+}
+
+export async function deleteSize(id) {
+  const { error } = await supabase.from('monte_buque_sizes').delete().eq('id', id);
   if (error) throw error;
 }
