@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchMonteItems } from '../../lib/catalog';
+import { fetchMonteItems, fetchSizes, formatBRL } from '../../lib/catalog';
 import { colors } from '../../styles/theme';
 
 const WA_NUMBER = '5585920057498';
@@ -27,8 +27,8 @@ const flowerColors = [
 
 const hexOf = (name) => flowerColors.find(c => c.name === name)?.hex || '#CCC';
 
-/* ── Card individual de flor / adicional ── */
-const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedColor, onSelectColor }) => {
+/* ── Card individual de item (flor / ornamentação / adicional) ── */
+const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedColor, onSelectColor, incDisabled, priceLabel }) => {
   const [paletteOpen, setPaletteOpen] = useState(false);
   return (
   <div style={{
@@ -38,95 +38,53 @@ const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedCol
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
-    transition: 'box-shadow 0.2s',
+    opacity: incDisabled && qty === 0 ? 0.55 : 1,
+    transition: 'opacity 0.2s',
   }}>
     <div style={{ width: '100%', aspectRatio: '1 / 1', overflow: 'hidden' }}>
-      <img
-        src={item.image}
-        alt={item.name}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-      />
+      <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
     </div>
     <div style={{ padding: isMobile ? '10px' : '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: '6px',
-        minHeight: isMobile ? '32px' : '36px',
-      }}>
-        <p style={{
-          fontSize: isMobile ? '11px' : '13px',
-          fontWeight: 600,
-          color: '#2E4A2E',
-          lineHeight: 1.35,
-          margin: 0,
-        }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px', minHeight: isMobile ? '32px' : '36px' }}>
+        <p style={{ fontSize: isMobile ? '11px' : '13px', fontWeight: 600, color: '#2E4A2E', lineHeight: 1.35, margin: 0 }}>
           {item.name}
         </p>
+        {priceLabel && (
+          <span style={{ fontSize: isMobile ? '11px' : '12px', fontWeight: 700, color: colors.purple[700] }}>{priceLabel}</span>
+        )}
         {showColorTag && (
           <>
             <button
               type="button"
               onClick={() => setPaletteOpen(o => !o)}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
+                display: 'inline-flex', alignItems: 'center', gap: '5px',
                 background: selectedColor ? colors.purple[600] : colors.purple[100],
                 color: selectedColor ? 'white' : colors.purple[700],
-                fontSize: isMobile ? '10px' : '11px',
-                fontWeight: 700,
-                padding: '3px 9px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
+                fontSize: isMobile ? '10px' : '11px', fontWeight: 700,
+                padding: '3px 9px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
               }}
             >
               {selectedColor ? (
                 <>
-                  <span style={{
-                    width: '11px', height: '11px', borderRadius: '50%',
-                    background: hexOf(selectedColor),
-                    border: '1px solid rgba(255,255,255,0.7)',
-                    flexShrink: 0,
-                  }} />
+                  <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: hexOf(selectedColor), border: '1px solid rgba(255,255,255,0.7)', flexShrink: 0 }} />
                   {selectedColor}
                 </>
               ) : '🎨 Escolha a cor'}
             </button>
             {paletteOpen && (
-              <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '6px',
-                padding: '8px',
-                background: 'white',
-                borderRadius: '10px',
-                border: `1px solid ${colors.purple[200]}`,
-                width: '100%',
-                boxSizing: 'border-box',
-              }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '8px', background: 'white', borderRadius: '10px', border: `1px solid ${colors.purple[200]}`, width: '100%', boxSizing: 'border-box' }}>
                 {flowerColors.map(c => {
                   const active = selectedColor === c.name;
                   return (
                     <button
-                      key={c.name}
-                      type="button"
-                      title={c.name}
+                      key={c.name} type="button" title={c.name}
                       onClick={() => { onSelectColor(active ? null : c.name); setPaletteOpen(false); }}
                       style={{
-                        width: '22px',
-                        height: '22px',
-                        borderRadius: '50%',
-                        background: c.hex,
+                        width: '22px', height: '22px', borderRadius: '50%', background: c.hex,
                         border: c.name === 'Branco' ? '1px solid #CCC' : '1px solid rgba(0,0,0,0.1)',
-                        outline: active ? `2px solid ${colors.purple[600]}` : 'none',
-                        outlineOffset: '1px',
-                        cursor: 'pointer',
-                        padding: 0,
-                        flexShrink: 0,
+                        outline: active ? `2px solid ${colors.purple[600]}` : 'none', outlineOffset: '1px',
+                        cursor: 'pointer', padding: 0, flexShrink: 0,
                       }}
                       aria-label={c.name}
                     />
@@ -142,53 +100,25 @@ const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedCol
           onClick={onDec}
           disabled={qty === 0}
           style={{
-            width: isMobile ? '28px' : '32px',
-            height: isMobile ? '28px' : '32px',
-            borderRadius: '50%',
-            border: 'none',
-            background: qty === 0 ? '#E0E0E0' : colors.purple[600],
-            color: qty === 0 ? '#BDBDBD' : 'white',
-            fontSize: '18px',
-            fontWeight: 700,
-            cursor: qty === 0 ? 'default' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            lineHeight: 1,
-            transition: 'background 0.15s',
-            flexShrink: 0,
+            width: isMobile ? '28px' : '32px', height: isMobile ? '28px' : '32px', borderRadius: '50%', border: 'none',
+            background: qty === 0 ? '#E0E0E0' : colors.purple[600], color: qty === 0 ? '#BDBDBD' : 'white',
+            fontSize: '18px', fontWeight: 700, cursor: qty === 0 ? 'default' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, flexShrink: 0,
           }}
           aria-label={`Diminuir ${item.name}`}
         >
           −
         </button>
-        <span style={{
-          fontSize: isMobile ? '16px' : '18px',
-          fontWeight: 700,
-          color: '#2E4A2E',
-          minWidth: '20px',
-          textAlign: 'center',
-        }}>
-          {qty}
-        </span>
+        <span style={{ fontSize: isMobile ? '16px' : '18px', fontWeight: 700, color: '#2E4A2E', minWidth: '20px', textAlign: 'center' }}>{qty}</span>
         <button
           onClick={onInc}
+          disabled={incDisabled}
+          title={incDisabled ? 'Limite atingido' : undefined}
           style={{
-            width: isMobile ? '28px' : '32px',
-            height: isMobile ? '28px' : '32px',
-            borderRadius: '50%',
-            border: 'none',
-            background: colors.purple[600],
-            color: 'white',
-            fontSize: '18px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            lineHeight: 1,
-            transition: 'background 0.15s',
-            flexShrink: 0,
+            width: isMobile ? '28px' : '32px', height: isMobile ? '28px' : '32px', borderRadius: '50%', border: 'none',
+            background: incDisabled ? '#E0E0E0' : colors.purple[600], color: incDisabled ? '#BDBDBD' : 'white',
+            fontSize: '18px', fontWeight: 700, cursor: incDisabled ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, flexShrink: 0,
           }}
           aria-label={`Aumentar ${item.name}`}
         >
@@ -202,42 +132,70 @@ const ItemCard = ({ item, qty, onInc, onDec, isMobile, showColorTag, selectedCol
 
 /* ── Componente principal ── */
 const MonteBuque = ({ isMobile }) => {
-  const [flores, setFlores]         = useState([]);
-  const [adicionais, setAdicionais] = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [florQty, setFlorQty]       = useState({});
-  const [adicQty, setAdicQty]       = useState({});
-  const [florColor, setFlorColor]   = useState({});
+  const [sizes, setSizes]             = useState([]);
+  const [flores, setFlores]           = useState([]);
+  const [ornamentacoes, setOrnamentacoes] = useState([]);
+  const [adicionais, setAdicionais]   = useState([]);
+  const [loading, setLoading]         = useState(true);
+
+  const [sizeId, setSizeId]           = useState(null);
+  const [florQty, setFlorQty]         = useState({});
+  const [ornQty, setOrnQty]           = useState({});
+  const [adicQty, setAdicQty]         = useState({});
+  const [florColor, setFlorColor]     = useState({});
 
   useEffect(() => {
-    fetchMonteItems()
-      .then(({ flores, adicionais }) => { setFlores(flores); setAdicionais(adicionais); })
-      .catch((e) => console.error('Erro ao carregar itens:', e))
+    Promise.all([fetchMonteItems(), fetchSizes()])
+      .then(([{ flores, ornamentacoes, adicionais }, sizes]) => {
+        setFlores(flores); setOrnamentacoes(ornamentacoes); setAdicionais(adicionais); setSizes(sizes);
+      })
+      .catch((e) => console.error('Erro ao carregar Monte seu Buquê:', e))
       .finally(() => setLoading(false));
   }, []);
 
-  const selectedItems = [
-    ...flores.map(f    => ({ ...f, qty: florQty[f.id] || 0, color: florColor[f.id] })),
-    ...adicionais.map(a => ({ ...a, qty: adicQty[a.id] || 0 })),
-  ].filter(i => i.qty > 0);
+  const size = sizes.find(s => s.id === sizeId) || null;
+  const capacity = size ? size.flowers : 0;
+  const ornamentMax = size ? size.ornamentMax : 0;
+  const totalFlowers = Object.values(florQty).reduce((a, b) => a + b, 0);
+  const flowersLeft = capacity - totalFlowers;
+  const totalOrnaments = Object.values(ornQty).reduce((a, b) => a + b, 0);
+  const ornamentsLeft = ornamentMax - totalOrnaments;
 
-  const hasItems = selectedItems.length > 0;
+  // Trocar de tamanho reinicia flores e ornamentações (evita estado inválido)
+  const selectSize = (id) => {
+    setSizeId(id);
+    setFlorQty({});
+    setOrnQty({});
+    setFlorColor({});
+  };
+
+  const adicionaisTotal = adicionais.reduce((sum, a) => sum + (a.price || 0) * (adicQty[a.id] || 0), 0);
+  const total = (size ? size.price : 0) + adicionaisTotal;
+
+  const selFlores = flores.filter(f => florQty[f.id] > 0);
+  const selOrn = ornamentacoes.filter(o => ornQty[o.id] > 0);
+  const selAdic = adicionais.filter(a => adicQty[a.id] > 0);
+  const canFinalize = !!size;
 
   const buildMsg = () => {
     const lines = ['Olá! Gostaria de montar um buquê personalizado.\n'];
-    const florSel = flores.filter(f => florQty[f.id] > 0);
-    const adicSel = adicionais.filter(a => adicQty[a.id] > 0);
-    if (florSel.length) {
-      lines.push('*Flores:*');
-      florSel.forEach(f => {
+    if (size) lines.push(`*Tamanho:* ${size.label} (${size.flowers} flores) — ${formatBRL(size.price)}`);
+    if (selFlores.length) {
+      lines.push('\n*Flores:*');
+      selFlores.forEach(f => {
         const color = !f.fixedColor && florColor[f.id] ? ` (cor: ${florColor[f.id]})` : '';
         lines.push(`- ${f.name}${color}: ${florQty[f.id]}x`);
       });
     }
-    if (adicSel.length) {
-      lines.push('\n*Adicionais:*');
-      adicSel.forEach(a => lines.push(`- ${a.name}: ${adicQty[a.id]}x`));
+    if (selOrn.length) {
+      lines.push('\n*Ornamentações:*');
+      selOrn.forEach(o => lines.push(`- ${o.name}: ${ornQty[o.id]}x`));
     }
+    if (selAdic.length) {
+      lines.push('\n*Adicionais:*');
+      selAdic.forEach(a => lines.push(`- ${a.name}: ${adicQty[a.id]}x (${formatBRL(a.price || 0)})`));
+    }
+    lines.push(`\n*Total: ${formatBRL(total)}*`);
     return encodeURIComponent(lines.join('\n'));
   };
 
@@ -247,109 +205,78 @@ const MonteBuque = ({ isMobile }) => {
     gap: isMobile ? '12px' : '16px',
   };
 
-  const SectionTitle = ({ emoji, label }) => (
-    <h3 style={{
-      fontSize: isMobile ? '15px' : '17px',
-      fontWeight: 700,
-      color: colors.purple[800],
-      margin: '0 0 14px',
-    }}>
-      {emoji} {label}
-    </h3>
+  const SectionTitle = ({ emoji, label, hint }) => (
+    <div style={{ margin: '0 0 14px' }}>
+      <h3 style={{ fontSize: isMobile ? '15px' : '17px', fontWeight: 700, color: colors.purple[800], margin: 0 }}>
+        {emoji} {label}
+      </h3>
+      {hint && <p style={{ fontSize: '12px', color: colors.purple[500], margin: '2px 0 0' }}>{hint}</p>}
+    </div>
   );
 
-  /* Painel de resumo — mesmo markup para desktop (sidebar) e mobile (bottom bar) */
+  /* Painel de resumo */
   const SummaryPanel = ({ mobile }) => (
     <div style={mobile ? {
-      position: 'fixed',
-      bottom: 0, left: 0, right: 0,
-      background: 'white',
-      borderTop: `2px solid ${colors.purple[200]}`,
-      padding: '12px 20px 16px',
-      zIndex: 600,
-      boxShadow: '0 -4px 20px rgba(91,61,143,0.13)',
+      position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white',
+      borderTop: `2px solid ${colors.purple[200]}`, padding: '12px 20px 16px', zIndex: 600, boxShadow: '0 -4px 20px rgba(91,61,143,0.13)',
     } : {
-      width: '260px',
-      flexShrink: 0,
-      position: 'sticky',
-      top: '80px',
-      background: 'white',
-      border: `1px solid ${colors.purple[200]}`,
-      borderRadius: '16px',
-      padding: '20px',
-      boxShadow: '0 4px 20px rgba(91,61,143,0.10)',
-      alignSelf: 'flex-start',
+      width: '270px', flexShrink: 0, position: 'sticky', top: '80px', background: 'white',
+      border: `1px solid ${colors.purple[200]}`, borderRadius: '16px', padding: '20px', boxShadow: '0 4px 20px rgba(91,61,143,0.10)', alignSelf: 'flex-start',
     }}>
-      {!mobile && (
-        <h4 style={{ fontWeight: 700, fontSize: '15px', color: colors.purple[800], margin: '0 0 14px' }}>
-          🛒 Resumo do pedido
-        </h4>
+      {!mobile && <h4 style={{ fontWeight: 700, fontSize: '15px', color: colors.purple[800], margin: '0 0 14px' }}>🛒 Resumo do pedido</h4>}
+
+      {!size ? (
+        !mobile && <p style={{ fontSize: '13px', color: '#BDBDBD', textAlign: 'center', padding: '12px 0', margin: '0 0 16px' }}>Escolha o tamanho do buquê para começar.</p>
+      ) : (
+        <div style={{ margin: mobile ? '0 0 8px' : '0 0 14px', maxHeight: mobile ? '90px' : 'none', overflowY: mobile ? 'auto' : 'visible' }}>
+          <div style={{ fontSize: mobile ? '12px' : '13px', color: colors.purple[800], fontWeight: 700 }}>
+            {size.label} · {size.flowers} flores
+          </div>
+          <div style={{ fontSize: '12px', color: colors.purple[500], marginBottom: '6px' }}>
+            {totalFlowers}/{capacity} flores selecionadas
+          </div>
+          {selFlores.map(f => (
+            <div key={f.id} style={{ fontSize: '12px', color: colors.purple[800], display: 'flex', justifyContent: 'space-between', gap: '6px' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                {florColor[f.id] && <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: hexOf(florColor[f.id]), border: '1px solid rgba(0,0,0,0.15)' }} />}
+                {f.name}{florColor[f.id] ? ` · ${florColor[f.id]}` : ''}
+              </span>
+              <span style={{ fontWeight: 700 }}>×{florQty[f.id]}</span>
+            </div>
+          ))}
+          {selOrn.map(o => (
+            <div key={o.id} style={{ fontSize: '12px', color: colors.purple[700], display: 'flex', justifyContent: 'space-between' }}>
+              <span>✦ {o.name}</span><span style={{ fontWeight: 700 }}>×{ornQty[o.id]}</span>
+            </div>
+          ))}
+          {selAdic.map(a => (
+            <div key={a.id} style={{ fontSize: '12px', color: colors.purple[700], display: 'flex', justifyContent: 'space-between' }}>
+              <span>+ {a.name}</span><span style={{ fontWeight: 700 }}>×{adicQty[a.id]}</span>
+            </div>
+          ))}
+        </div>
       )}
 
-      {hasItems ? (
-        <ul style={{
-          listStyle: 'none',
-          padding: 0,
-          margin: mobile ? '0 0 10px' : '0 0 16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '6px',
-          maxHeight: mobile ? '72px' : 'none',
-          overflowY: mobile ? 'auto' : 'visible',
-        }}>
-          {selectedItems.map(i => (
-            <li key={i.id} style={{
-              fontSize: mobile ? '12px' : '13px',
-              color: colors.purple[800],
-              display: 'flex',
-              justifyContent: 'space-between',
-              gap: '8px',
-            }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                {i.color && (
-                  <span style={{
-                    width: '10px', height: '10px', borderRadius: '50%',
-                    background: hexOf(i.color), border: '1px solid rgba(0,0,0,0.15)', flexShrink: 0,
-                  }} />
-                )}
-                {i.name}{i.color ? ` · ${i.color}` : ''}
-              </span>
-              <span style={{ fontWeight: 700, flexShrink: 0 }}>×{i.qty}</span>
-            </li>
-          ))}
-        </ul>
-      ) : !mobile && (
-        <p style={{ fontSize: '13px', color: colors.gray ? colors.gray[400] : '#BDBDBD', textAlign: 'center', padding: '12px 0', margin: '0 0 16px' }}>
-          Nenhum item selecionado ainda
-        </p>
+      {size && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: `1px solid ${colors.purple[200]}`, paddingTop: '10px', marginBottom: '12px' }}>
+          <span style={{ fontSize: '13px', color: colors.gray[600] }}>Total</span>
+          <strong style={{ fontSize: mobile ? '18px' : '20px', color: colors.purple[700] }}>{formatBRL(total)}</strong>
+        </div>
       )}
 
       <a
-        href={hasItems ? `https://wa.me/${WA_NUMBER}?text=${buildMsg()}` : undefined}
-        target={hasItems ? '_blank' : undefined}
+        href={canFinalize ? `https://wa.me/${WA_NUMBER}?text=${buildMsg()}` : undefined}
+        target={canFinalize ? '_blank' : undefined}
         rel="noopener noreferrer"
-        onClick={!hasItems ? e => e.preventDefault() : undefined}
+        onClick={!canFinalize ? e => e.preventDefault() : undefined}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          background: hasItems
-            ? 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)'
-            : '#E0E0E0',
-          color: hasItems ? 'white' : '#9E9E9E',
-          fontWeight: 700,
-          fontSize: mobile ? '15px' : '14px',
-          padding: mobile ? '13px 16px' : '12px 16px',
-          borderRadius: '10px',
-          textDecoration: 'none',
-          cursor: hasItems ? 'pointer' : 'not-allowed',
-          pointerEvents: hasItems ? 'auto' : 'none',
-          transition: 'opacity 0.2s',
-          boxShadow: hasItems ? '0 4px 14px rgba(37,211,102,0.30)' : 'none',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          background: canFinalize ? 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)' : '#E0E0E0',
+          color: canFinalize ? 'white' : '#9E9E9E', fontWeight: 700, fontSize: mobile ? '15px' : '14px',
+          padding: mobile ? '13px 16px' : '12px 16px', borderRadius: '10px', textDecoration: 'none',
+          cursor: canFinalize ? 'pointer' : 'not-allowed', pointerEvents: canFinalize ? 'auto' : 'none',
+          boxShadow: canFinalize ? '0 4px 14px rgba(37,211,102,0.30)' : 'none',
         }}
-        onMouseEnter={e => { if (hasItems) e.currentTarget.style.opacity = '0.9'; }}
-        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
       >
         💬 Finalizar pedido via WhatsApp
       </a>
@@ -358,68 +285,126 @@ const MonteBuque = ({ isMobile }) => {
 
   return (
     <>
-      {/* Layout principal: conteúdo + painel lateral (desktop) */}
-      <div style={{
-        display: 'flex',
-        gap: '28px',
-        alignItems: 'flex-start',
-        paddingBottom: isMobile ? '100px' : '0',
-      }}>
-        {/* Conteúdo: flores + adicionais */}
+      <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', paddingBottom: isMobile ? '120px' : '0' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           {loading ? (
-            <p style={{ color: colors.purple[400], fontSize: '14px', padding: '20px 0' }}>Carregando itens…</p>
+            <p style={{ color: colors.purple[400], fontSize: '14px', padding: '20px 0' }}>Carregando…</p>
           ) : (
           <>
-          <SectionTitle emoji="🌷" label="Flores" />
-          {flores.length === 0 ? (
-            <p style={{ color: '#9E9E9E', fontSize: '14px' }}>Nenhum item disponível</p>
-          ) : (
-            <div style={gridStyle}>
-              {flores.map(f => (
-                <ItemCard
-                  key={f.id}
-                  item={f}
-                  qty={florQty[f.id] || 0}
-                  isMobile={isMobile}
-                  showColorTag={!f.fixedColor}
-                  selectedColor={florColor[f.id] || null}
-                  onSelectColor={(c) => setFlorColor(prev => ({ ...prev, [f.id]: c }))}
-                  onInc={() => setFlorQty(q => ({ ...q, [f.id]: (q[f.id] || 0) + 1 }))}
-                  onDec={() => setFlorQty(q => ({ ...q, [f.id]: Math.max(0, (q[f.id] || 0) - 1) }))}
-                />
-              ))}
+            {/* ── SELETOR DE TAMANHO ── */}
+            <SectionTitle emoji="📏" label="1. Escolha o tamanho do buquê" hint="O tamanho define o preço e quantas flores você pode escolher." />
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(130px, 1fr))',
+              gap: isMobile ? '10px' : '12px',
+              marginBottom: isMobile ? '28px' : '36px',
+            }}>
+              {sizes.map(s => {
+                const active = s.id === sizeId;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => selectSize(s.id)}
+                    style={{
+                      textAlign: 'center',
+                      background: active ? colors.purple[600] : 'white',
+                      color: active ? 'white' : colors.purple[700],
+                      border: `2px solid ${active ? colors.purple[600] : colors.purple[200]}`,
+                      borderRadius: '12px', padding: '12px 14px', cursor: 'pointer', fontFamily: 'inherit',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <div style={{ fontSize: isMobile ? '18px' : '20px', fontWeight: 800 }}>{s.flowers} flores</div>
+                    <div style={{ fontSize: '11px', opacity: 0.85, margin: '1px 0 4px' }}>{s.label}</div>
+                    <div style={{ fontSize: isMobile ? '14px' : '15px', fontWeight: 800 }}>{formatBRL(s.price)}</div>
+                  </button>
+                );
+              })}
             </div>
-          )}
 
-          <div style={{ margin: isMobile ? '28px 0 14px' : '36px 0 14px' }}>
-            <SectionTitle emoji="✨" label="Adicionais" />
-          </div>
-          {adicionais.length === 0 ? (
-            <p style={{ color: '#9E9E9E', fontSize: '14px' }}>Nenhum item disponível</p>
-          ) : (
-            <div style={gridStyle}>
-              {adicionais.map(a => (
-                <ItemCard
-                  key={a.id}
-                  item={a}
-                  qty={adicQty[a.id] || 0}
-                  isMobile={isMobile}
-                  onInc={() => setAdicQty(q => ({ ...q, [a.id]: (q[a.id] || 0) + 1 }))}
-                  onDec={() => setAdicQty(q => ({ ...q, [a.id]: Math.max(0, (q[a.id] || 0) - 1) }))}
-                />
-              ))}
+            {/* ── FLORES ── */}
+            <SectionTitle
+              emoji="🌷"
+              label="2. Escolha as flores"
+              hint={size ? `${totalFlowers}/${capacity} selecionadas${flowersLeft === 0 ? ' · limite atingido' : ` · faltam ${flowersLeft}`}` : 'Escolha um tamanho primeiro.'}
+            />
+            {flores.length === 0 ? (
+              <p style={{ color: '#9E9E9E', fontSize: '14px' }}>Nenhuma flor disponível</p>
+            ) : (
+              <div style={gridStyle}>
+                {flores.map(f => (
+                  <ItemCard
+                    key={f.id}
+                    item={f}
+                    qty={florQty[f.id] || 0}
+                    isMobile={isMobile}
+                    showColorTag={!f.fixedColor}
+                    selectedColor={florColor[f.id] || null}
+                    onSelectColor={(c) => setFlorColor(prev => ({ ...prev, [f.id]: c }))}
+                    incDisabled={!size || flowersLeft <= 0}
+                    onInc={() => { if (size && flowersLeft > 0) setFlorQty(q => ({ ...q, [f.id]: (q[f.id] || 0) + 1 })); }}
+                    onDec={() => setFlorQty(q => ({ ...q, [f.id]: Math.max(0, (q[f.id] || 0) - 1) }))}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* ── ORNAMENTAÇÕES ── */}
+            {ornamentacoes.length > 0 && (
+              <>
+                <div style={{ margin: isMobile ? '28px 0 0' : '36px 0 0' }}>
+                  <SectionTitle
+                    emoji="🌿"
+                    label="3. Ornamentações"
+                    hint={size ? `${totalOrnaments}/${ornamentMax} no total${ornamentsLeft <= 0 ? ' · limite atingido' : ` · faltam ${ornamentsLeft}`}` : 'Escolha um tamanho primeiro.'}
+                  />
+                </div>
+                <div style={gridStyle}>
+                  {ornamentacoes.map(o => (
+                    <ItemCard
+                      key={o.id}
+                      item={o}
+                      qty={ornQty[o.id] || 0}
+                      isMobile={isMobile}
+                      incDisabled={!size || ornamentsLeft <= 0}
+                      onInc={() => { if (size && ornamentsLeft > 0) setOrnQty(q => ({ ...q, [o.id]: (q[o.id] || 0) + 1 })); }}
+                      onDec={() => setOrnQty(q => ({ ...q, [o.id]: Math.max(0, (q[o.id] || 0) - 1) }))}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* ── ADICIONAIS ── */}
+            <div style={{ margin: isMobile ? '28px 0 0' : '36px 0 0' }}>
+              <SectionTitle emoji="✨" label="4. Adicionais" hint={size ? 'Itens extras com valor por unidade.' : 'Escolha um tamanho primeiro.'} />
             </div>
-          )}
+            {adicionais.length === 0 ? (
+              <p style={{ color: '#9E9E9E', fontSize: '14px' }}>Nenhum adicional disponível</p>
+            ) : (
+              <div style={gridStyle}>
+                {adicionais.map(a => (
+                  <ItemCard
+                    key={a.id}
+                    item={a}
+                    qty={adicQty[a.id] || 0}
+                    isMobile={isMobile}
+                    priceLabel={formatBRL(a.price || 0)}
+                    incDisabled={!size}
+                    onInc={() => { if (size) setAdicQty(q => ({ ...q, [a.id]: (q[a.id] || 0) + 1 })); }}
+                    onDec={() => setAdicQty(q => ({ ...q, [a.id]: Math.max(0, (q[a.id] || 0) - 1) }))}
+                  />
+                ))}
+              </div>
+            )}
           </>
           )}
         </div>
 
-        {/* Painel de resumo — desktop sidebar */}
         {!isMobile && <SummaryPanel mobile={false} />}
       </div>
 
-      {/* Painel de resumo — mobile fixed bottom */}
       {isMobile && <SummaryPanel mobile={true} />}
     </>
   );
